@@ -18,7 +18,7 @@ public class Car {
 
     // Methods
     public void start() {
-        System.out.println("Starting the " + brand + " " + model);
+        System.out.println("Welcome, starting the " + brand + " " + model);
         this.running = true;
     }
 
