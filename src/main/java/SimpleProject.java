@@ -6,10 +6,12 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class SimpleProject {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws JsonProcessingException {
         // Create an instance of the Person class
         Person person = new Person("John", 25);
 
@@ -41,10 +43,10 @@ public class SimpleProject {
         String requestBody = objectMapper
                 .writeValueAsString(bodyParams);
 
-        // 1. Importar o Jackson (que contem a class ObjectMapper) usando o pom
-        // 2. (Aparte) Quando alterares o pom, não te esqueças de fazer reload
-        // 3. Se a classe for importada corretamente, fazer run e ver se o Spotify devolve 200
-        // 4. Se não devolver 200, tentar perceber o que se passa
+        // 1. Importar o Jackson (que contem a class ObjectMapper) usando o pom - ok
+        // 2. (Aparte) Quando alterares o pom, não te esqueças de fazer reload - ok
+        // 3. Se a classe for importada corretamente, fazer run e ver se o Spotify devolve 200 - ok (mas nao deu 200 D:)
+        // 4. Se não devolver 200, tentar perceber o que se passa (nao sei o que se passa)
         // 5. Se devolver 200, tentar fazer um pedido ao outro endpoint do Spotify (Get Album Tracks)
             // Usar o Postman para gerar um token e usar esse token
 

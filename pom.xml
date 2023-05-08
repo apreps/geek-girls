@@ -20,4 +20,12 @@
         </plugins>
     </build>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.kie.modules</groupId>
+            <artifactId>com-fasterxml-jackson</artifactId>
+            <version>6.5.0.Final</version>
+            <type>pom</type>
+        </dependency>
+    </dependencies>
 </project>
