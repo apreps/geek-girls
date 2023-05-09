@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -9,9 +10,17 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 
 public class SimpleProject {
-    public static void main(String[] args) throws JsonProcessingException {
+    public static void main(String[] args) throws UnsupportedEncodingException {
         // Create an instance of the Person class
         Person person = new Person("John", 25);
 
@@ -27,38 +36,41 @@ public class SimpleProject {
         //car.accelerate();
         //car.brake();
 
-        // Simple HTTP Java Client for Spotify
         String newString = "Alguma coisa";
         List<Double> arrayDoubles = new ArrayList<>();
         Person person1 = new Person("Alice", 23);
 
-        HttpClient client = HttpClient.newHttpClient();
-        HashMap bodyParams = new HashMap<String, String>() {{
-            put("client_id", "2c9b26578dd9468a83f3a0272ff1cebd");
-            put("client_secret", "bde4634e7b6e4480b834ee1acea9bc2c");
-            put("grant_type","client_credentials");
-        }};
+        // Simple HTTP Java Client for Spotify
+        final String SPOTIFY_URL = "https://accounts.spotify.com/api/token";
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String requestBody = objectMapper
-                .writeValueAsString(bodyParams);
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 
-        // 1. Importar o Jackson (que contem a class ObjectMapper) usando o pom - ok
-        // 2. (Aparte) Quando alterares o pom, não te esqueças de fazer reload - ok
-        // 3. Se a classe for importada corretamente, fazer run e ver se o Spotify devolve 200 - ok (mas nao deu 200 D:)
-        // 4. Se não devolver 200, tentar perceber o que se passa (nao sei o que se passa)
-        // 5. Se devolver 200, tentar fazer um pedido ao outro endpoint do Spotify (Get Album Tracks)
-            // Usar o Postman para gerar um token e usar esse token
+        HttpPost httpPost = new HttpPost(SPOTIFY_URL);
+        httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://accounts.spotify.com/api/token"))
-                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                .build();
+        String bodyParams = "client_id=2c9b26578dd9468a83f3a0272ff1cebd&client_secret=bde4634e7b6e4480b834ee1acea9bc2c&grant_type=client_credentials";
+
+        HttpEntity paramEntity = new StringEntity(bodyParams);
+        httpPost.setEntity(paramEntity);
+
+
+        // 0. Criar classe de um objecto com duas strings (access_token e token_type) e um inteiro (expires_in)
+            // usar exemplo do SpotifyError
+        // 1 . Criar objecto da classe nova
+        // 2. Mapear responseString para o objecto criado
+            // usar objectMapper (?)
+            // Secção 3.2 >> https://www.baeldung.com/jackson-object-mapper-tutorial#2-json-to-java-object
+        // 2. Usar a informação guardada no objecto para fazer uma chamada ao endpoint "Get Tracks" do Spotify
 
         try {
-            HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println("Spotify returned HTTP Code: " + response.statusCode());
-        } catch (IOException | InterruptedException e) {
+            CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
+            System.out.println("GET Response Status: " + httpResponse.getStatusLine().getStatusCode());
+
+            HttpEntity entity = httpResponse.getEntity();
+            String responseString = EntityUtils.toString(entity, "UTF-8");
+            System.out.println("GET Response body: " + responseString);
+
+        } catch (IOException exception) {
             System.out.println("Exception thrown by the HTTP Client");
         }
     }
