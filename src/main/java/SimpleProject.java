@@ -65,6 +65,7 @@ public class SimpleProject {
         try {
             CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
             System.out.println("GET Response Status: " + httpResponse.getStatusLine().getStatusCode());
+            System.out.println("Ola");
 
             HttpEntity entity = httpResponse.getEntity();
             String responseString = EntityUtils.toString(entity, "UTF-8");
